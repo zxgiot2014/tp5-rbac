@@ -28,7 +28,7 @@ class Permission extends Validate
         'category_id.require' => '权限分类必须选择',
         'category_id.number' => '权限分类必须是数字id',
         'name.unique' => '权限名称不能重复',
-        'path.unique' => '权限路径不能为空',
+        'path.unique' => '权限路径不能重复',
         'type.require' => '权限类型不能为空'
     ];
 
