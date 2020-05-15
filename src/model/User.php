@@ -1,15 +1,16 @@
 <?php
 /**
- * Created by WeiYongQiang.
- * User: weiyongqiang <hayixia606@163.com>
- * Date: 2019-04-17
- * Time: 22:51
+ * Created by PhpStorm.
+ * User: 周新国
+ * Date: 2020/5/15
+ * Time: 17:25
+ * Function：文件描述
  */
 
 namespace gmars\rbac\model;
 
 
-class UserRole extends Base
+class User extends Base
 {
     /**
      * @var string 时间自动填写

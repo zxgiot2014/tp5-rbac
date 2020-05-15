@@ -11,5 +11,12 @@ namespace gmars\rbac\model;
 
 class RolePermission extends Base
 {
+    /**
+     * @var string 时间自动填写
+     * @author zhouxinguo
+     */
+    protected $autoWriteTimestamp = 'datetime';
+    protected $createTime = 'create_time';
+    protected $updateTime = 'update_time';
 
 }

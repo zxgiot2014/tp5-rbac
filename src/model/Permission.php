@@ -9,7 +9,6 @@
 namespace gmars\rbac\model;
 
 
-
 use think\Db;
 use think\Exception;
 use think\facade\Cache;
@@ -17,6 +16,13 @@ use think\facade\Session;
 
 class Permission extends Base
 {
+    /**
+     * @var string 时间自动填写
+     * @author zhouxinguo
+     */
+    protected $autoWriteTimestamp = 'datetime';
+    protected $createTime = 'create_time';
+    protected $updateTime = 'update_time';
     /**
      * @var string 权限缓存前缀
      */
@@ -103,8 +109,7 @@ class Permission extends Base
         }
         $newPermission = [];
         if (!empty($permission)) {
-            foreach ($permission as $k=>$v)
-            {
+            foreach ($permission as $k => $v) {
                 $newPermission[$v['path']] = $v;
             }
         }
@@ -143,7 +148,7 @@ class Permission extends Base
     {
         $model = Db::name('permission')->setConnection($this->getConnection());
         if (is_numeric($condition)) {
-           return $model->where('id', $condition)->find();
+            return $model->where('id', $condition)->find();
         } else {
             return $model->where($condition)->select();
         }

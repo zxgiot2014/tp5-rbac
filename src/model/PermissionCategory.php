@@ -14,6 +14,13 @@ use think\Exception;
 
 class PermissionCategory extends Base
 {
+    /**
+     * @var string 时间自动填写
+     * @author zhouxinguo
+     */
+    protected $autoWriteTimestamp = 'datetime';
+    protected $createTime = 'create_time';
+    protected $updateTime = 'update_time';
 
     /**
      * 编辑权限分组
