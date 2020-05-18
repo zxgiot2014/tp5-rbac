@@ -46,13 +46,14 @@ class Permission extends Base
         if (!empty($data)) {
             $this->data($data);
         }
-        $validate = new \iset\rbac\validate\Permission();
-        if (!$validate->check($this)) {
-            throw new Exception($validate->getError());
-        }
         $data = $this->getData();
         if (isset($data['id']) && !empty($data['id'])) {
             $this->isUpdate(true);
+        } else {
+            $validate = new \iset\rbac\validate\Permission();
+            if (!$validate->check($this)) {
+                throw new Exception($validate->getError());
+            }
         }
         $this->save();
         return $this;
