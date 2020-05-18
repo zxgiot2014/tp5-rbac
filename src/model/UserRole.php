@@ -6,7 +6,7 @@
  * Time: 22:51
  */
 
-namespace gmars\rbac\model;
+namespace iset\rbac\model;
 
 
 class UserRole extends Base

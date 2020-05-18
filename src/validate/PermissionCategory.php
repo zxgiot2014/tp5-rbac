@@ -6,7 +6,7 @@
  * Time: 22:54
  */
 
-namespace gmars\rbac\validate;
+namespace iset\rbac\validate;
 
 
 use think\Validate;
@@ -14,7 +14,7 @@ use think\Validate;
 class PermissionCategory extends Validate
 {
     protected $rule = [
-        'name' => 'require|max:50|unique:gmars\rbac\model\permissioncategory,name',
+        'name' => 'require|max:50|unique:iset\rbac\model\permissioncategory,name',
     ];
 
     protected $message = [

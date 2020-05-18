@@ -6,7 +6,7 @@
  * Time: 22:52
  */
 
-namespace gmars\rbac\model;
+namespace iset\rbac\model;
 
 
 use think\Model;

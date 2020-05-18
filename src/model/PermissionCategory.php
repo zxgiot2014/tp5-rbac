@@ -6,7 +6,7 @@
  * Time: 22:50
  */
 
-namespace gmars\rbac\model;
+namespace iset\rbac\model;
 
 
 use think\Db;
@@ -33,7 +33,7 @@ class PermissionCategory extends Base
         if (!empty($data)) {
             $this->data($data);
         }
-        $validate = new \gmars\rbac\validate\PermissionCategory();
+        $validate = new \iset\rbac\validate\PermissionCategory();
         if (!$validate->check($this)) {
             throw new Exception($validate->getError());
         }

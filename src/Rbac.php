@@ -8,14 +8,14 @@
  * Time: 上午12:38
  */
 
-namespace gmars\rbac;
+namespace iset\rbac;
 
 
-use gmars\nestedsets\NestedSets;
-use gmars\rbac\model\Permission;
-use gmars\rbac\model\PermissionCategory;
-use gmars\rbac\model\Role;
-use gmars\rbac\model\UserRole;
+use iset\nestedsets\NestedSets;
+use iset\rbac\model\Permission;
+use iset\rbac\model\PermissionCategory;
+use iset\rbac\model\Role;
+use iset\rbac\model\UserRole;
 use think\Db;
 use think\db\Query;
 use think\db\Where;
@@ -355,7 +355,7 @@ class Rbac
             $permissionList = Cache::get($token);
         } else {
             //获取session中的缓存名
-            $cacheName = Session::get('gmars_rbac_permission_name');
+            $cacheName = Session::get('iset_rbac_permission_name');
             if (empty($cacheName)) {
                 throw new Exception('未查询到登录信息');
             }

@@ -6,7 +6,7 @@
  * Time: 16:56
  */
 
-namespace gmars\rbac;
+namespace iset\rbac;
 
 
 use think\Db;
@@ -20,7 +20,7 @@ class CreateTable
     public function __construct()
     {
         $this->_lockFile = Env::get('root_path') . 'runtime/rbac_sql.lock';
-        $this->_sqlFile = dirname(__DIR__) . '/gmars_rbac.sql';
+        $this->_sqlFile = dirname(__DIR__) . '/iset_rbac.sql';
     }
 
     /**

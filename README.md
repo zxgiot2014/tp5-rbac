@@ -6,12 +6,12 @@
 打开命令行工具切换到你的tp5项目根目录
 
 ```
-composer require xgzhou/tp5-rbac
+composer require iset/tp5-rbac
 ```
 如果该方法报错请按照以下方式操作：
 
 1. 打开项目根目录下的composer.json
-2. 在require中添加"gmars/tp5-rbac": "dev-master"
+2. 在require中添加"iset/tp5-rbac": "dev-master"
 3. 运行composer update
 
 添加后composer.json应该有这样的部分：
@@ -20,7 +20,7 @@ composer require xgzhou/tp5-rbac
     "require": {
         "php": ">=5.4.0",
         "topthink/framework": "^5.0",
-        "gmars/tp5-rbac": "dev-master"
+        "iset/tp5-rbac": "dev-master"
     },
 ```
 
@@ -171,13 +171,13 @@ $rbac->can('article/channel/list');
 
 
 # < v2.0使用说明
-## `数据迁移(可选，可以直接使用包中的gmars_rbac.sql文件导入)`
+## `数据迁移(可选，可以直接使用包中的iset_rbac.sql文件导入)`
 在使用本插件之前需要有rbac锁需要的数据库。在迁移之前如果你的数据库中已有user数据表那么请你备份自己的user数据表后删除。
 
 在你的项目的某个config.php中加入如下配置：
 ```php
 'migration' => [
-    'path' => ROOT_PATH .'vendor/gmars/tp5-rbac/'
+    'path' => ROOT_PATH .'vendor/iset/tp5-rbac/'
 ],
 ```
 然后把命令行切换到你的项目根目录Windows是cmd运行如下命令

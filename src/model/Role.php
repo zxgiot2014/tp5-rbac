@@ -6,7 +6,7 @@
  * Time: 22:51
  */
 
-namespace gmars\rbac\model;
+namespace iset\rbac\model;
 
 
 use think\Db;
@@ -34,7 +34,7 @@ class Role extends Base
         if (!empty($data)) {
             $this->data($data);
         }
-        $validate = new \gmars\rbac\validate\Role();
+        $validate = new \iset\rbac\validate\Role();
         if (!$validate->check($this)) {
             throw new Exception($validate->getError());
         }

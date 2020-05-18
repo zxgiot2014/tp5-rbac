@@ -7,7 +7,7 @@
  * Function：文件描述
  */
 
-namespace gmars\rbac\model;
+namespace iset\rbac\model;
 
 
 class User extends Base

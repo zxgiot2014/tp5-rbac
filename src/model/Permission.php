@@ -6,7 +6,7 @@
  * Time: 22:49
  */
 
-namespace gmars\rbac\model;
+namespace iset\rbac\model;
 
 
 use think\Db;
@@ -46,7 +46,7 @@ class Permission extends Base
         if (!empty($data)) {
             $this->data($data);
         }
-        $validate = new \gmars\rbac\validate\Permission();
+        $validate = new \iset\rbac\validate\Permission();
         if (!$validate->check($this)) {
             throw new Exception($validate->getError());
         }
@@ -114,7 +114,7 @@ class Permission extends Base
             }
         }
         Cache::set($this->_permissionCachePrefix . $userId, $newPermission, $timeOut);
-        Session::set('gmars_rbac_permission_name', $this->_permissionCachePrefix . $userId);
+        Session::set('iset_rbac_permission_name', $this->_permissionCachePrefix . $userId);
         return $newPermission;
     }
 
