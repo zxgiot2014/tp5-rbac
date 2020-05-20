@@ -34,13 +34,15 @@ class Role extends Base
         if (!empty($data)) {
             $this->data($data);
         }
-        $validate = new \iset\rbac\validate\Role();
-        if (!$validate->check($this)) {
-            throw new Exception($validate->getError());
-        }
         $data = $this->getData();
+        // 更新时不对参数必须项进行判断
         if (isset($data['id']) && !empty($data['id'])) {
             $this->isUpdate(true);
+        }else{
+            $validate = new \iset\rbac\validate\Role();
+            if (!$validate->check($this)) {
+                throw new Exception($validate->getError());
+            }
         }
         $this->startTrans();
         if ($this->save() === false) {
