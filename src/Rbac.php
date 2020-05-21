@@ -16,6 +16,7 @@ use iset\rbac\model\Permission;
 use iset\rbac\model\PermissionCategory;
 use iset\rbac\model\Role;
 use iset\rbac\model\UserRole;
+use iset\rbac\model\User;
 use think\Db;
 use think\db\Query;
 use think\db\Where;
