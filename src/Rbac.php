@@ -80,7 +80,7 @@ class Rbac
      */
     public function setDb($db = '')
     {
-       $this->db = $db;
+        $this->db = $db;
     }
 
 
@@ -94,7 +94,7 @@ class Rbac
     {
         $model = new Permission($this->db);
         $model->data($data);
-        try{
+        try {
             $res = $model->savePermission();
             return $res;
         } catch (Exception $e) {
@@ -114,7 +114,7 @@ class Rbac
         if (!empty($id)) {
             $data['id'] = $id;
         }
-        try{
+        try {
             return $this->createPermission($data);
         } catch (Exception $e) {
             throw new Exception($e->getMessage());
@@ -177,7 +177,7 @@ class Rbac
     {
         $model = new PermissionCategory($this->db);
         $model->data($data);
-        try{
+        try {
             $res = $model->saveCategory();
             return $res;
         } catch (Exception $e) {
@@ -227,7 +227,7 @@ class Rbac
     {
         $model = new Role($this->db);
         $model->data($data);
-        try{
+        try {
             $res = $model->saveRole($permissionIds);
             return $res;
         } catch (Exception $e) {
@@ -288,8 +288,7 @@ class Rbac
             throw new Exception('删除用户原有角色出错');
         }
         $userRole = [];
-        foreach ($role as $v)
-        {
+        foreach ($role as $v) {
             $userRole [] = ['user_id' => $userId, 'role_id' => $v];
         }
         if ($model->saveAll($userRole) === false) {
@@ -297,7 +296,7 @@ class Rbac
             throw new Exception('给用户分配角色出错');
         }
         $model->commit();
-        return ;
+        return;
     }
 
     /**
@@ -392,8 +391,7 @@ class Rbac
         if (!empty($permission)) {
             $newPermission = [];
             if (!empty($permission)) {
-                foreach ($permission as $k=>$v)
-                {
+                foreach ($permission as $k => $v) {
                     $newPermission[$v['path']] = $v;
                 }
             }
@@ -454,31 +452,27 @@ class Rbac
         $randRes = "";
         switch ($type) {
             case 'string':
-                for ($i = 0; $i < $length; $i++)
-                {
+                for ($i = 0; $i < $length; $i++) {
                     $randomInt = rand(0, strlen($seed) - 1);
                     $randRes .= $seed{$randomInt};
                 }
                 break;
             case 'number':
-                for ($i = 0; $i < $length; $i++)
-                {
+                for ($i = 0; $i < $length; $i++) {
                     $randomInt = rand(0, strlen($number) - 1);
                     $randRes .= $number{$randomInt};
                 }
                 break;
             case 'mix':
                 $mix = $number . $seed;
-                for ($i = 0; $i < $length; $i++)
-                {
+                for ($i = 0; $i < $length; $i++) {
                     $randomInt = rand(0, strlen($mix) - 1);
                     $randRes .= $mix{$randomInt};
                 }
                 break;
             case 'special':
                 $special = $number . $seed . $specialChar;
-                for ($i = 0; $i < $length; $i++)
-                {
+                for ($i = 0; $i < $length; $i++) {
                     $randomInt = rand(0, strlen($special) - 1);
                     $randRes .= $special{$randomInt};
                 }
@@ -520,7 +514,7 @@ class Rbac
     {
         throw new Exception('请使用createRole方法在data中传入主键，如果你得项目中依旧想使用此方法请安装v1.3.1版本');
     }
-    
+
     /**
      * @param array $data
      * @return int|string
@@ -530,6 +524,61 @@ class Rbac
     public function createUser(array $data = [])
     {
         throw new Exception('该方法在新版本中已经废弃，因为用户表的差异比较大请大家自行实现');
+    }
+
+    /****************************************************************************************
+     * 用户相关接口
+     ***************************************************************************************/
+    /**
+     * 保存和编辑用户
+     * @param array $data
+     * @return PermissionCategory
+     * @throws Exception
+     */
+    public function saveUser(array $data = [])
+    {
+        $model = new User($this->db);
+        $model->data($data);
+        try {
+            $res = $model->saveUser();
+            return $res;
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());
+        }
+    }
+
+    /**
+     * 获取用户，支持传入查询条件
+     * @param $where
+     * @return array|null|\PDOStatement|string|\think\Collection|\think\Model
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     * @author zhouxinguo
+     * @data 2020/5/21 10:19
+     */
+    public function getUser($where)
+    {
+        $model = new User($this->db);
+        return $model->getUser($where);
+    }
+
+
+    /**
+     * 根据主键删除用户(支持多主键用数组的方式传入)
+     * @param int $id
+     * @return bool
+     * @throws Exception
+     */
+    public function delUser($id = 0)
+    {
+        $model = new User($this->db);
+        try {
+            $res = $model->delUser($id);
+            return $res;
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());
+        }
     }
 
 }
