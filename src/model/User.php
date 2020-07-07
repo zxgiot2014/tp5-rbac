@@ -31,7 +31,7 @@ class User extends Base
      */
     protected function setPasswordAttr()
     {
-        return md5($this->getData('password') . Config::get('rbac.salt_token'));
+        return md5($this->getData('password') . Config::get('app.rbac.salt_password'));
     }
 
     /**

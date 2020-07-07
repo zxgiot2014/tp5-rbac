@@ -1,9 +1,10 @@
 <?php
 /**
- * Created by WeiYongQiang.
- * User: weiyongqiang <hayixia606@163.com>
- * Date: 2019-04-17
- * Time: 22:50
+ * Created by PhpStorm.
+ * User: zhouxinguo <iszhouxinguo@outlook.com>
+ * Date: 2020/5/15
+ * Time: 17:25
+ * Function：PermissionCategory模型相关操作
  */
 
 namespace iset\rbac\model;

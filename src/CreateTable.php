@@ -1,9 +1,10 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: hayix
- * Date: 2019-04-17
- * Time: 16:56
+ * User: zhouxinguo <iszhouxinguo@outlook.com>
+ * Date: 2020/5/15
+ * Time: 17:25
+ * Function：生成数据库相关操作
  */
 
 namespace iset\rbac;
@@ -16,6 +17,11 @@ class CreateTable
 {
     private $_lockFile = '';
     private $_sqlFile = '';
+    /**
+     * rbac数据库配置
+     * @var string
+     */
+    private $db = '';
 
     public function __construct()
     {
@@ -29,9 +35,15 @@ class CreateTable
      */
     public function create($db = '')
     {
-        $dbConfig = Db::getConfig();
-        $prefix = $db == ''? $dbConfig['prefix'] : $dbConfig[$db]['prefix'];
-
+        // 判断是否传入rbac数据库的连接信息
+        if ($db == '') {
+            $dbConfig = Db::getConfig();
+            $prefix = $dbConfig['prefix'];
+            $this->db=$dbConfig;
+        } else {
+            $prefix = $db['prefix'];
+            $this->db=$db;
+        }
         if (file_exists($this->_lockFile)) {
             echo "<b style='color:red'>数据库创建操作被锁定，请删除[{$this->_lockFile}]文件后重试</b>";
             exit;
@@ -54,10 +66,10 @@ class CreateTable
     private function _generateSql($prefix = '')
     {
         $sql = $this->_loadSqlFile();
-        $prefix = empty($prefix)? '' : $prefix;
+        $prefix = empty($prefix) ? '' : $prefix;
         $sql = str_replace('###', $prefix, $sql);
         $sqlArr = explode(';', $sql);
-        if (Db::batchQuery($sqlArr) === false) {
+        if (Db::connect($this->db)->batchQuery($sqlArr) === false) {
             return false;
         }
         return true;

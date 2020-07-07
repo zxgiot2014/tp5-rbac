@@ -1,9 +1,10 @@
 <?php
 /**
- * Created by WeiYongQiang.
- * User: weiyongqiang <hayixia606@163.com>
- * Date: 2019-04-17
- * Time: 22:54
+ * Created by PhpStorm.
+ * User: zhouxinguo <iszhouxinguo@outlook.com>
+ * Date: 2020/5/15
+ * Time: 17:25
+ * Function：Permission模型参数校验器
  */
 
 namespace iset\rbac\validate;

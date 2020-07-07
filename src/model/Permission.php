@@ -1,9 +1,10 @@
 <?php
 /**
- * Created by WeiYongQiang.
- * User: weiyongqiang <hayixia606@163.com>
- * Date: 2019-04-17
- * Time: 22:49
+ * Created by PhpStorm.
+ * User: zhouxinguo <iszhouxinguo@outlook.com>
+ * Date: 2020/5/15
+ * Time: 17:25
+ * Function：permission模型相关操作
  */
 
 namespace iset\rbac\model;
@@ -12,6 +13,7 @@ namespace iset\rbac\model;
 use think\Db;
 use think\Exception;
 use think\facade\Cache;
+use think\facade\Config;
 use think\facade\Session;
 
 class Permission extends Base
@@ -23,11 +25,7 @@ class Permission extends Base
     protected $autoWriteTimestamp = 'datetime';
     protected $createTime = 'create_time';
     protected $updateTime = 'update_time';
-    /**
-     * @var string 权限缓存前缀
-     */
-    private $_permissionCachePrefix = "_RBAC_PERMISSION_CACHE_";
-
+    
     protected $auto = ['path_id'];
 
     protected function setPathIdAttr()
@@ -95,12 +93,13 @@ class Permission extends Base
      * @throws \think\db\exception\ModelNotFoundException
      * @throws \think\exception\DbException
      */
-    public function userPermission($userId, $timeOut = 3600)
+    public function userPermission($userId)
     {
         if (empty($userId)) {
             throw new Exception('参数错误');
         }
-        $permission = Cache::get($this->_permissionCachePrefix . $userId);
+        // 判断是否已经有缓存
+        $permission = Cache::get(Config::get('app.rbac.permission_cache_prefix') . $userId);
         if (!empty($permission)) {
             return $permission;
         }
@@ -114,9 +113,27 @@ class Permission extends Base
                 $newPermission[$v['path']] = $v;
             }
         }
-        Cache::set($this->_permissionCachePrefix . $userId, $newPermission, $timeOut);
-        Session::set('iset_rbac_permission_name', $this->_permissionCachePrefix . $userId);
+        Cache::set(Config::get('app.rbac.permission_cache_prefix') . $userId, $newPermission);
         return $newPermission;
+    }
+
+    /**
+     * @param $path
+     * @return bool
+     * @throws Exception
+     * 检查用户有没有权限执行某操作
+     */
+    public function can($userId, $path)
+    {
+        $permissionList = Cache::get(Config::get('app.rbac.permission_cache_prefix') . $userId);
+        if (empty($permissionList)) {
+            throw new Exception('您的登录信息已过期请重新登录');
+        }
+
+        if (isset($permissionList[$path]) && !empty($permissionList[$path])) {
+            return true;
+        }
+        return false;
     }
 
     /**

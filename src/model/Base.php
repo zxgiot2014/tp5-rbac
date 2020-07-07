@@ -1,9 +1,10 @@
 <?php
 /**
- * Created by WeiYongQiang.
- * User: weiyongqiang <hayixia606@163.com>
- * Date: 2019-04-17
- * Time: 22:52
+ * Created by PhpStorm.
+ * User: zhouxinguo <iszhouxinguo@outlook.com>
+ * Date: 2020/5/15
+ * Time: 17:25
+ * Function：model基类，用于确定每个model的数据库连接信息
  */
 
 namespace iset\rbac\model;
@@ -18,7 +19,7 @@ class Base extends Model
     public function __construct($db = '', $data = [])
     {
         parent::__construct($data);
-        $this->connection = empty($db)? config('rbac')['db'] : $db;
+        $this->connection = empty($db) ? config('rbac')['db'] : $db;
     }
 
 }

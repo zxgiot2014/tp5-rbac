@@ -1,10 +1,10 @@
 <?php
 /**
  * Created by PhpStorm.
- * Author: 魏永强   <hayixia606@163.com>
- * GitHub: https://github.com/gmars
- * Blog: http://blog.csdn.net/marswill
- * Date: 2017/8/21
+ * Author： zhouxinguo <iszhouxinguo@outlook.com>
+ * GitHub: https://github.com/zxgiot2014/tp5-rbac
+ * ShowDoc: http://doc.smartmgxf.com/web/#/17?page_id=491
+ * Date: 2020/7/6
  * Time: 上午12:38
  */
 
@@ -28,55 +28,36 @@ use think\facade\Session;
 class Rbac
 {
 
-
     /**
-     * 认证方式   service方式和jwt方式
-     * @var string
-     */
-    private $type = "service";
-
-    /**
-     * rbac存放的数据库
+     * rbac数据库配置
      * @var string
      */
     private $db = '';
 
     /**
-     * jwt token生成加密密钥
-     * @var string
+     * 用于配置这个rbac模块的数据库连接信息
+     * Rbac constructor.
      */
-    private $saltToken = 'asdfqet9#$@#GS#$%080asdfaasdg';
-
-    /**
-     * token名称
-     * @var string
-     */
-    private $tokenKey = 'Authorization';
-
     public function __construct()
     {
         $rbacConfig = config('rbac');
         if (!empty($rbacConfig)) {
             isset($rbacConfig['db']) && $this->db = $rbacConfig['db'];
-            isset($rbacConfig['type']) && $this->type = $rbacConfig['type'];
-            isset($rbacConfig['salt_token']) && $this->saltToken = $rbacConfig['salt_token'];
-            isset($rbacConfig['token_key']) && $this->tokenKey = $rbacConfig['token_key'];
         }
 
     }
 
     /**
      * 生成所需的数据表
-     * @param string $db
      */
-    public function createTable($db = '')
+    public function createTable()
     {
         $createTable = new CreateTable();
-        $createTable->create($db);
+        $createTable->create($this->db);
     }
 
     /**
-     * 配置参数
+     * 手动配置数据库连接信息，可以在获取rbac实例后调用
      * @param string $db
      */
     public function setDb($db = '')
@@ -103,24 +84,6 @@ class Rbac
         }
     }
 
-    /**
-     * 修改权限数据(版本兼容暂时保留建议使用createPermission方法)
-     * @param array $data
-     * @param null $id
-     * @return Permission
-     * @throws Exception
-     */
-    public function editPermission(array $data = [], $id = null)
-    {
-        if (!empty($id)) {
-            $data['id'] = $id;
-        }
-        try {
-            return $this->createPermission($data);
-        } catch (Exception $e) {
-            throw new Exception($e->getMessage());
-        }
-    }
 
     /**
      * 根据主键删除权限(支持多主键用数组的方式传入)
@@ -341,190 +304,18 @@ class Rbac
 
     /**
      * @param $path
-     * @return bool
+     * @return bool 是否有权限
      * @throws Exception
      * 检查用户有没有权限执行某操作
      */
-    public function can($path)
+    public function can($userId, $path)
     {
-        if ($this->type == 'jwt') {
-            $token = Request::header($this->tokenKey);
-            if (empty($token)) {
-                throw new Exception('未获取到token');
-            }
-            $permissionList = Cache::get($token);
-        } else {
-            //获取session中的缓存名
-            $cacheName = Session::get('iset_rbac_permission_name');
-            if (empty($cacheName)) {
-                throw new Exception('未查询到登录信息');
-            }
-            $permissionList = Cache::get($cacheName);
+        if (empty($userId) || empty($path)) {
+            throw new Exception('参数错误');
         }
-
-        if (empty($permissionList)) {
-            throw new Exception('您的登录信息已过期请重新登录');
-        }
-
-        if (isset($permissionList[$path]) && !empty($permissionList[$path])) {
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * 生成jwt的token
-     * @param $userId
-     * @param int $timeOut
-     * @param string $prefix
-     * @return array
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\ModelNotFoundException
-     * @throws \think\exception\DbException
-     */
-    public function generateToken($userId, $timeOut = 7200, $prefix = '')
-    {
-        $token = md5($prefix . $this->randCode(32) . $this->saltToken . time());
-        $freshTOken = md5($prefix . $this->randCode(32) . $this->saltToken . time());
-        $permissionModel = new Permission($this->db);
-        $permission = $permissionModel->getPermissionByUserId($userId);
-        //无权限时为登录验证用
-        if (!empty($permission)) {
-            $newPermission = [];
-            if (!empty($permission)) {
-                foreach ($permission as $k => $v) {
-                    $newPermission[$v['path']] = $v;
-                }
-            }
-            Cache::set($token, $newPermission, $timeOut);
-        } else {
-            //权限为空时token仅仅用作登录身份验证
-            Cache::set($token, '', $timeOut);
-        }
-        Cache::set($freshTOken, $token, $timeOut);
-        return [
-            'token' => $token,
-            'refresh_token' => $freshTOken,
-            'expire' => $timeOut
-        ];
-    }
-
-    /**
-     * 刷新token
-     * @param $refreshToken
-     * @param int $timeOut
-     * @param string $prefix
-     * @return array
-     * @throws Exception
-     */
-    public function refreshToken($refreshToken, $timeOut = 7200, $prefix = '')
-    {
-        $token = Cache::get($refreshToken);
-        if (empty($token)) {
-            throw new Exception('refresh_token已经过期');
-        }
-        $permission = Cache::get($token);
-        if (empty($permission)) {
-            throw new Exception('token已经过期');
-        }
-        $token = md5($prefix . $this->randCode(32) . $this->saltToken . time());
-        $freshTOken = md5($prefix . $this->randCode(32) . $this->saltToken . time());
-        Cache::set($token, $permission, $timeOut);
-        Cache::set($freshTOken, $token);
-        return [
-            'token' => $token,
-            'refresh_token' => $freshTOken,
-            'expire' => $timeOut
-        ];
-
-    }
-
-    /**
-     * 生成随机码
-     * @param int $length
-     * @param string $type string|mix|number|special
-     * @return string
-     */
-    private function randCode($length = 6, $type = 'mix')
-    {
-        $number = '0123456789';
-        $seed = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        $specialChar = '!@#$%^&*()_+[]|';
-        $randRes = "";
-        switch ($type) {
-            case 'string':
-                for ($i = 0; $i < $length; $i++) {
-                    $randomInt = rand(0, strlen($seed) - 1);
-                    $randRes .= $seed{$randomInt};
-                }
-                break;
-            case 'number':
-                for ($i = 0; $i < $length; $i++) {
-                    $randomInt = rand(0, strlen($number) - 1);
-                    $randRes .= $number{$randomInt};
-                }
-                break;
-            case 'mix':
-                $mix = $number . $seed;
-                for ($i = 0; $i < $length; $i++) {
-                    $randomInt = rand(0, strlen($mix) - 1);
-                    $randRes .= $mix{$randomInt};
-                }
-                break;
-            case 'special':
-                $special = $number . $seed . $specialChar;
-                for ($i = 0; $i < $length; $i++) {
-                    $randomInt = rand(0, strlen($special) - 1);
-                    $randRes .= $special{$randomInt};
-                }
-                break;
-        }
-        return $randRes;
-    }
-
-    /**
-     * @param $roleId
-     * @param array $permission
-     * @return int|string
-     * @throws Exception
-     * 为角色分配权限
-     */
-    public function assignRolePermission($roleId, array $permission = [])
-    {
-        throw new Exception('该方法已经弃用，请在创建角色时分配权限，调用createRole方法。如果你得项目中依旧想使用此方法请安装v1.3.1版本');
-    }
-
-    /**
-     * 移动角色
-     * @param $id
-     * @param $parentId
-     * @throws Exception
-     */
-    public function moveRole($id, $parentId)
-    {
-        throw new Exception('新版本中已经弃用角色的可继承关系，请使用用户可分配多个角色替代，如果你得项目中依旧想使用此方法请安装v1.3.1版本');
-    }
-
-    /**
-     * 修改角色数据
-     * @param $data
-     * @return int|string
-     * @throws Exception
-     */
-    public function editRole($data)
-    {
-        throw new Exception('请使用createRole方法在data中传入主键，如果你得项目中依旧想使用此方法请安装v1.3.1版本');
-    }
-
-    /**
-     * @param array $data
-     * @return int|string
-     * @throws Exception
-     * 创建用户[建议在自己系统的业务逻辑中实现]
-     */
-    public function createUser(array $data = [])
-    {
-        throw new Exception('该方法在新版本中已经废弃，因为用户表的差异比较大请大家自行实现');
+        $model = new Permission($this->db);
+        $isHavePermission = $model->can($userId, $path);
+        return $isHavePermission;
     }
 
     /****************************************************************************************
